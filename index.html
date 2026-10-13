@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BioTest Diagnósticos - Gestión de laboratorio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="barra">
+  <div class="marca">
+    <span class="marca-simbolo" aria-hidden="true"></span>
+    <div><h1 id="titulo-sitio">BioTest Diagnósticos</h1><p>Sitio de práctica para pruebas de software</p></div>
+  </div>
+  <div class="sesion">
+    <label class="opcion-linea"><input type="checkbox" id="modo-sin-conexion"> Simular sin conexión</label>
+    <span id="usuario-activo" hidden></span>
+    <span id="sesion-restante" class="metrica" hidden></span>
+    <button type="button" id="btn-salir" class="boton-secundario" hidden>Cerrar sesión</button>
+  </div>
+</header>
+
+<nav class="menu" aria-label="Secciones">
+  <button type="button" id="nav-ingreso" data-vista="ingreso" class="activo">Ingreso</button>
+  <button type="button" id="nav-pacientes" data-vista="pacientes" disabled>Pacientes</button>
+  <button type="button" id="nav-ordenes" data-vista="ordenes" disabled>Órdenes</button>
+  <button type="button" id="nav-facturacion" data-vista="facturacion" disabled>Facturación</button>
+  <button type="button" id="nav-panel" data-vista="panel" disabled>Panel general</button>
+  <button type="button" id="nav-historias" data-vista="historias" disabled>Historias clínicas</button>
+  <button type="button" id="nav-consulta" data-vista="consulta">Consulta pública</button>
+</nav>
+
+<main>
+  <!-- INGRESO -->
+  <section id="vista-ingreso" class="vista">
+    <h2>Ingresa a tu cuenta</h2>
+    <p class="ayuda">Operador: <strong>operador01</strong> / <strong>Operador2026!</strong>. Paciente: <strong>paciente01</strong> / <strong>Biotest2026!</strong></p>
+    <form id="form-login" novalidate>
+      <div class="campo"><label for="login-usuario">Usuario</label>
+        <input type="text" id="login-usuario" autocomplete="off"><p class="error" id="e-login-usuario" role="alert"></p></div>
+      <div class="campo"><label for="login-clave">Contraseña</label>
+        <div class="con-boton"><input type="password" id="login-clave" autocomplete="off">
+          <button type="button" id="btn-mostrar-clave" class="boton-secundario">Mostrar</button></div>
+        <p class="error" id="e-login-clave" role="alert"></p></div>
+      <p class="error" id="login-error" role="alert"></p>
+      <button type="submit" id="btn-ingresar" class="boton-principal">Ingresar</button>
+    </form>
+  </section>
+
+  <!-- PACIENTES -->
+  <section id="vista-pacientes" class="vista" hidden>
+    <h2>Registrar paciente</h2>
+    <form id="form-paciente" novalidate>
+      <div class="rejilla">
+        <div class="campo"><label for="p-nombre">Nombre</label><input type="text" id="p-nombre" autocomplete="off"><p class="error" id="e-p-nombre" role="alert"></p></div>
+        <div class="campo"><label for="p-cedula">Cédula</label><input type="text" id="p-cedula" inputmode="numeric" autocomplete="off"><p class="error" id="e-p-cedula" role="alert"></p></div>
+        <div class="campo"><label for="p-edad">Edad</label><input type="number" id="p-edad" min="0" max="120"><p class="error" id="e-p-edad" role="alert"></p></div>
+      </div>
+      <p class="mensaje" id="msg-paciente" role="status" aria-live="polite"></p>
+      <button type="submit" id="btn-registrar-paciente" class="boton-principal">Registrar</button>
+    </form>
+    <h3>Pacientes registrados</h3>
+    <div class="tabla-contenedor"><table id="tabla-pacientes"><thead><tr><th>ID</th><th>Nombre</th><th>Cédula</th><th>Edad</th></tr></thead><tbody id="cuerpo-pacientes"></tbody></table></div>
+  </section>
+
+  <!-- ÓRDENES -->
+  <section id="vista-ordenes" class="vista" hidden>
+    <h2>Órdenes de examen</h2>
+    <form id="form-orden" novalidate>
+      <div class="rejilla">
+        <div class="campo"><label for="o-paciente">Paciente</label><select id="o-paciente"></select><p class="error" id="e-o-paciente" role="alert"></p></div>
+        <div class="campo"><label for="o-examen">Examen</label>
+          <select id="o-examen"><option value="">Selecciona un examen</option><option>Hemograma</option><option>Perfil lipídico</option><option>Glicemia en ayunas</option><option>Uroanálisis</option></select>
+          <p class="error" id="e-o-examen" role="alert"></p></div>
+      </div>
+      <div class="campo"><label for="o-obs">Observaciones clínicas (opcional)</label><textarea id="o-obs" rows="2" maxlength="200"></textarea></div>
+      <p class="mensaje" id="msg-orden" role="status" aria-live="polite"></p>
+      <div class="acciones">
+        <button type="submit" id="btn-crear-orden" class="boton-principal">Guardar orden</button>
+        <button type="button" id="btn-exportar" class="boton-secundario">Exportar CSV</button>
+        <button type="button" id="btn-masivo" class="boton-secundario">Cargar 200 órdenes de prueba</button>
+        <button type="button" id="btn-reiniciar" class="boton-secundario">Restablecer datos</button>
+      </div>
+    </form>
+
+    <div id="panel-edicion" class="panel-aparte" hidden>
+      <h3 id="edit-titulo" style="margin-top:0"></h3>
+      <label for="edit-obs">Observaciones clínicas</label>
+      <textarea id="edit-obs" rows="2" maxlength="200"></textarea>
+      <p class="mensaje" id="msg-edicion" role="status" aria-live="polite"></p>
+      <button type="button" id="btn-guardar-obs" class="boton-principal">Guardar cambios</button>
+      <button type="button" id="btn-cancelar-obs" class="boton-secundario">Cancelar</button>
+    </div>
+
+    <div id="panel-reporte" class="panel-aparte" hidden>
+      <h3 id="rep-titulo" style="margin-top:0"></h3>
+      <dl id="rep-datos"></dl>
+      <button type="button" id="btn-imprimir" class="boton-secundario">Imprimir reporte</button>
+    </div>
+
+    <h3>Órdenes registradas</h3>
+    <div class="barra-herramientas">
+      <div class="campo"><label for="filtro-id">Filtrar por código de orden</label>
+        <input type="text" id="filtro-id" placeholder="ORD-000001" autocomplete="off"><p class="error" id="e-filtro-id" role="alert"></p></div>
+      <p class="metrica">Mostrando <span id="filtro-cuenta">0</span> órdenes. Tiempo del filtro: <span id="tiempo-filtro">0</span> ms</p>
+    </div>
+    <div class="tabla-contenedor"><table id="tabla-ordenes"><thead><tr><th>Orden</th><th>Paciente</th><th>Examen</th><th>Estado</th><th>Observaciones</th><th>Acciones</th></tr></thead><tbody id="cuerpo-ordenes"></tbody></table></div>
+  </section>
+
+  <!-- FACTURACIÓN -->
+  <section id="vista-facturacion" class="vista" hidden>
+    <h2>Facturación</h2>
+    <p class="ayuda">Envía cada orden a cobro desde la sección Órdenes con el botón "Facturar".</p>
+    <p class="mensaje" id="msg-factura" role="status" aria-live="polite"></p>
+    <div class="tabla-contenedor"><table id="tabla-facturas"><thead><tr><th>Factura</th><th>Orden</th><th>Paciente</th><th>Valor (COP)</th></tr></thead><tbody id="cuerpo-facturas"></tbody></table></div>
+  </section>
+
+  <!-- PANEL -->
+  <section id="vista-panel" class="vista" hidden>
+    <h2>Panel general</h2>
+    <p class="metrica">Última actualización: <span id="p-actualizado">-</span></p>
+    <div class="contadores">
+      <div><strong id="p-total">0</strong>Órdenes</div>
+      <div><strong id="p-recibido">0</strong>Recibidas</div>
+      <div><strong id="p-proceso">0</strong>En proceso</div>
+      <div><strong id="p-listo">0</strong>Listas</div>
+      <div><strong id="p-facturadas">0</strong>Facturadas</div>
+    </div>
+  </section>
+
+  <!-- HISTORIAS -->
+  <section id="vista-historias" class="vista" hidden>
+    <h2>Historias clínicas</h2>
+    <p class="mensaje fallo" id="historias-denegado" role="alert" hidden>Acceso denegado: esta sección es solo para usuarios con rol de operador.</p>
+    <div id="historias-contenido" hidden>
+      <div class="tabla-contenedor"><table id="tabla-historias"><thead><tr><th>Paciente</th><th>Cédula</th><th>Edad</th><th>Órdenes</th></tr></thead><tbody id="cuerpo-historias"></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- CONSULTA PÚBLICA -->
+  <section id="vista-consulta" class="vista" hidden>
+    <h2>Consulta pública de estado</h2>
+    <p class="ayuda">Escribe el código de la orden. Caso de práctica: <strong>ORD-000001</strong>.</p>
+    <form id="form-consulta" novalidate>
+      <div class="campo"><label for="c-codigo">Código de orden</label><input type="text" id="c-codigo" placeholder="ORD-000001" autocomplete="off"><p class="error" id="e-c-codigo" role="alert"></p></div>
+      <button type="submit" id="btn-consultar" class="boton-principal">Consultar</button>
+    </form>
+    <p id="cargando" class="cargando" hidden>Buscando…</p>
+    <p class="mensaje" id="msg-consulta" role="status" aria-live="polite"></p>
+    <p class="metrica">Tiempo de respuesta: <span id="tiempo-consulta">0</span> ms</p>
+    <article id="consulta-panel" class="resultado" hidden>
+      <h3 id="c-titulo"></h3>
+      <dl><dt>Paciente</dt><dd id="c-paciente"></dd><dt>Documento</dt><dd id="c-documento"></dd><dt>Examen</dt><dd id="c-examen"></dd><dt>Estado</dt><dd id="c-estado"></dd></dl>
+    </article>
+  </section>
+</main>
+
+<footer class="pie"><p>Datos ficticios para el curso Calidad de Software. Carga inicial: <span id="carga-ms">0</span> ms</p></footer>
+<script src="app.js"></script>
+</body>
+</html>
